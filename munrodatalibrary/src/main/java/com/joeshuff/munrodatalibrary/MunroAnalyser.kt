@@ -35,24 +35,24 @@ class MunroAnalyser {
             } }
         }
 
+        fun filterByMinHeight(minimumHeight: Float) = apply {
+            filterInstructions.add {
+                it.filter { it.heightMetric > minimumHeight }
+            }
+        }
+
+        fun filterByMaxHeight(maximumHeight: Float) = apply {
+            filterInstructions.add {
+                it.filter { it.heightMetric < maximumHeight }
+            }
+        }
+
         fun orderByHeight(sortDir: SortDirection) = apply {
             filterInstructions.add {
                 when (sortDir) {
                     SortDirection.ASC -> it.sortedBy { it.heightMetric }
                     SortDirection.DESC -> it.sortedByDescending { it.heightMetric }
                 }
-            }
-        }
-
-        fun minHeight(minimumHeight: Float) = apply {
-            filterInstructions.add {
-                it.filter { it.heightMetric > minimumHeight }
-            }
-        }
-
-        fun maxHeight(maximumHeight: Float) = apply {
-            filterInstructions.add {
-                it.filter { it.heightMetric < maximumHeight }
             }
         }
 
@@ -63,6 +63,10 @@ class MunroAnalyser {
                     SortDirection.DESC -> it.sortedByDescending { it.name }
                 }
             }
+        }
+
+        fun orderBy() {
+
         }
 
         fun limit(maxSize: Int) = apply { sizeLimit = maxSize }

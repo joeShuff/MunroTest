@@ -27,7 +27,7 @@ class MunroDataUnitTesting {
     fun `search munros by hill type munro`() {
         assertThat(
             MunroAnalyser.Builder()
-                .byType(HillCategory.MUNRO)
+                .filterByType(HillCategory.MUNRO)
                 .apply()
                 .size
         ).isEqualTo(40)
@@ -37,7 +37,7 @@ class MunroDataUnitTesting {
     fun `search munros by hill type munro top`() {
         assertThat(
             MunroAnalyser.Builder()
-                .byType(HillCategory.MUNRO_TOP)
+                .filterByType(HillCategory.MUNRO_TOP)
                 .apply()
                 .size
         ).isEqualTo(40)
@@ -47,7 +47,7 @@ class MunroDataUnitTesting {
     fun `search munros by hill type either returns all`() {
         assertThat(
             MunroAnalyser.Builder()
-                .byType(HillCategory.EITHER)
+                .filterByType(HillCategory.EITHER)
                 .apply()
                 .size
         ).isEqualTo(80)
@@ -57,7 +57,7 @@ class MunroDataUnitTesting {
     fun `sort munros by height ascending`() {
         assertThat(
             MunroAnalyser.Builder()
-                .byHeight(SortDirection.ASC)
+                .orderByHeight(SortDirection.ASC)
                 .apply()
         ).isInOrder(compareBy<Munro> { it.heightMetric })
     }
@@ -66,7 +66,7 @@ class MunroDataUnitTesting {
     fun `sort munros by height descending`() {
         assertThat(
             MunroAnalyser.Builder()
-                .byHeight(SortDirection.DESC)
+                .orderByHeight(SortDirection.DESC)
                 .apply()
         ).isInOrder(compareByDescending<Munro> { it.heightMetric })
     }
@@ -75,7 +75,7 @@ class MunroDataUnitTesting {
     fun `sort munros by name ascending`() {
         assertThat(
             MunroAnalyser.Builder()
-                .byName(SortDirection.ASC)
+                .orderByName(SortDirection.ASC)
                 .apply()
         ).isInOrder(compareBy<Munro> { it.name })
     }
@@ -84,7 +84,7 @@ class MunroDataUnitTesting {
     fun `sort munros by name descending`() {
         assertThat(
             MunroAnalyser.Builder()
-                .byName(SortDirection.DESC)
+                .orderByName(SortDirection.DESC)
                 .apply()
         ).isInOrder(compareByDescending<Munro> { it.name })
     }
@@ -103,7 +103,7 @@ class MunroDataUnitTesting {
     fun `min height set returns only larger munros`() {
         assertThat(
             MunroAnalyser.Builder()
-                .minHeight(1000f)
+                .filterByMinHeight(1000f)
                 .apply()
                 .size
         ).isEqualTo(58)
@@ -113,7 +113,7 @@ class MunroDataUnitTesting {
     fun `max height set returns only lower munros`() {
         assertThat(
             MunroAnalyser.Builder()
-                .maxHeight(1000f)
+                .filterByMaxHeight(1000f)
                 .apply()
                 .size
         ).isEqualTo(20)
@@ -122,9 +122,9 @@ class MunroDataUnitTesting {
     @Test
     fun `top 10 munro tops that are over twelve hundred meters ordered by name ascending`() {
         val searchQuery = MunroAnalyser.Builder()
-            .byType(HillCategory.MUNRO_TOP)
-            .minHeight(1200f)
-            .byName(SortDirection.ASC)
+            .filterByType(HillCategory.MUNRO_TOP)
+            .filterByMinHeight(1200f)
+            .orderByName(SortDirection.ASC)
             .limit(10)
             .apply()
 
@@ -136,5 +136,10 @@ class MunroDataUnitTesting {
     @Test
     fun `empty query returns whole list`() {
         assertThat(MunroAnalyser.Builder().apply().size).isEqualTo(80)
+    }
+
+    @Test
+    fun `order by name then height`() {
+
     }
 }
