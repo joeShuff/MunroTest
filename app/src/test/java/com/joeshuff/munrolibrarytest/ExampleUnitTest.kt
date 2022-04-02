@@ -118,4 +118,23 @@ class MunroDataUnitTesting {
                 .size
         ).isEqualTo(20)
     }
+
+    @Test
+    fun `top 10 munro tops that are over twelve hundred meters ordered by name ascending`() {
+        val searchQuery = MunroAnalyser.Builder()
+            .byType(HillCategory.MUNRO_TOP)
+            .minHeight(1200f)
+            .byName(SortDirection.ASC)
+            .limit(10)
+            .apply()
+
+        assertThat(searchQuery.size).isEqualTo(10)
+        assertThat(searchQuery.filter { it.hillCategory != HillCategory.MUNRO_TOP }).isEmpty()
+        assertThat(searchQuery.filter { it.heightMetric < 1200f }).isEmpty()
+    }
+
+    @Test
+    fun `empty query returns whole list`() {
+        assertThat(MunroAnalyser.Builder().apply().size).isEqualTo(80)
+    }
 }

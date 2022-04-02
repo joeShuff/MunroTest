@@ -56,7 +56,7 @@ class MunroAnalyser {
             }
         }
 
-        fun byName(sortDir: SortDirection) = apply {
+        fun byName(sortDir: SortDirection = SortDirection.ASC) = apply {
             filterInstructions.add {
                 when (sortDir) {
                     SortDirection.ASC -> it.sortedBy { it.name }
