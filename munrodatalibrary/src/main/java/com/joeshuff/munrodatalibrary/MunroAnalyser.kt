@@ -28,14 +28,14 @@ class MunroAnalyser {
 
         private var sizeLimit: Int? = null
 
-        fun byType(category: HillCategory) = apply {
+        fun filterByType(category: HillCategory) = apply {
             filterInstructions.add { it.filter {
                 if (category == HillCategory.EITHER) true
                 else it.hillCategory == category
             } }
         }
 
-        fun byHeight(sortDir: SortDirection) = apply {
+        fun orderByHeight(sortDir: SortDirection) = apply {
             filterInstructions.add {
                 when (sortDir) {
                     SortDirection.ASC -> it.sortedBy { it.heightMetric }
@@ -56,7 +56,7 @@ class MunroAnalyser {
             }
         }
 
-        fun byName(sortDir: SortDirection = SortDirection.ASC) = apply {
+        fun orderByName(sortDir: SortDirection = SortDirection.ASC) = apply {
             filterInstructions.add {
                 when (sortDir) {
                     SortDirection.ASC -> it.sortedBy { it.name }
