@@ -98,4 +98,24 @@ class MunroDataUnitTesting {
                 .size
         ).isEqualTo(10)
     }
+
+    @Test
+    fun `min height set returns only larger munros`() {
+        assertThat(
+            MunroAnalyser.Builder()
+                .minHeight(1000f)
+                .apply()
+                .size
+        ).isEqualTo(58)
+    }
+
+    @Test
+    fun `max height set returns only lower munros`() {
+        assertThat(
+            MunroAnalyser.Builder()
+                .maxHeight(1000f)
+                .apply()
+                .size
+        ).isEqualTo(20)
+    }
 }

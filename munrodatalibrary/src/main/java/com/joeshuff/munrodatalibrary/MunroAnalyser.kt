@@ -1,5 +1,7 @@
 package com.joeshuff.munrodatalibrary
 
+import kotlin.math.max
+
 class MunroAnalyser {
 
     private var loadedMunros = arrayListOf<Munro>()
@@ -21,21 +23,6 @@ class MunroAnalyser {
 
     fun getMunros(): List<Munro> = loadedMunros
 
-    fun getMunrosByType(searchHillCategory: HillCategory = HillCategory.EITHER): List<Munro> =
-        Builder()
-            .byType(searchHillCategory)
-            .apply()
-
-    fun getMunrosByHeight(sortDir: SortDirection): List<Munro> =
-        Builder()
-            .byHeight(sortDir)
-            .apply()
-
-    fun getMunrosByName(sortDir: SortDirection): List<Munro> =
-        Builder()
-            .byName(sortDir)
-            .apply()
-
     class Builder {
         private val filterInstructions = arrayListOf<(List<Munro>) -> List<Munro>>()
 
@@ -54,6 +41,18 @@ class MunroAnalyser {
                     SortDirection.ASC -> it.sortedBy { it.heightMetric }
                     SortDirection.DESC -> it.sortedByDescending { it.heightMetric }
                 }
+            }
+        }
+
+        fun minHeight(minimumHeight: Float) = apply {
+            filterInstructions.add {
+                it.filter { it.heightMetric > minimumHeight }
+            }
+        }
+
+        fun maxHeight(maximumHeight: Float) = apply {
+            filterInstructions.add {
+                it.filter { it.heightMetric < maximumHeight }
             }
         }
 
