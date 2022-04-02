@@ -21,22 +21,57 @@ class MunroAnalyser {
     fun getMunros(): List<Munro> = loadedMunros
 
     fun getMunrosByType(searchHillCategory: HillCategory = HillCategory.EITHER): List<Munro> =
-        loadedMunros.filter {
-            if (searchHillCategory == HillCategory.EITHER) true
-            else it.hillCategory == searchHillCategory
+        Builder()
+            .byType(searchHillCategory)
+            .apply()
+
+    fun getMunrosByHeight(sortDir: SortDirection): List<Munro> =
+        Builder()
+            .byHeight(sortDir)
+            .apply()
+
+    fun getMunrosByName(sortDir: SortDirection): List<Munro> =
+        Builder()
+            .byName(sortDir)
+            .apply()
+
+    class Builder {
+        private val filterInstructions = arrayListOf<(List<Munro>) -> List<Munro>>()
+
+        fun byType(category: HillCategory) = apply {
+            filterInstructions.add { it.filter {
+                if (category == HillCategory.EITHER) true
+                else it.hillCategory == category
+            } }
         }
 
-    fun getMunrosByHeight(sortDir: SortDirection): List<Munro> {
-        return when (sortDir) {
-            SortDirection.ASC -> loadedMunros.sortedBy { it.heightMetric }
-            SortDirection.DESC -> loadedMunros.sortedByDescending { it.heightMetric }
+        fun byHeight(sortDir: SortDirection) = apply {
+            filterInstructions.add {
+                when (sortDir) {
+                    SortDirection.ASC -> it.sortedBy { it.heightMetric }
+                    SortDirection.DESC -> it.sortedByDescending { it.heightMetric }
+                }
+            }
+        }
+
+        fun byName(sortDir: SortDirection) = apply {
+            filterInstructions.add {
+                when (sortDir) {
+                    SortDirection.ASC -> it.sortedBy { it.name }
+                    SortDirection.DESC -> it.sortedByDescending { it.name }
+                }
+            }
+        }
+
+        fun apply(): List<Munro> {
+            var munros = MunroAnalyser().getMunros()
+
+            filterInstructions.forEach {
+                munros = it.invoke(munros)
+            }
+
+            return munros
         }
     }
 
-    fun getMunrosByName(sortDir: SortDirection): List<Munro> {
-        return when (sortDir) {
-            SortDirection.ASC -> loadedMunros.sortedBy { it.name }
-            SortDirection.DESC -> loadedMunros.sortedByDescending { it.name }
-        }
-    }
 }

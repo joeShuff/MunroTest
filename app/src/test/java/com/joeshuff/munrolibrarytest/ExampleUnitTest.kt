@@ -25,34 +25,58 @@ class MunroDataUnitTesting {
 
     @Test
     fun `search munros by hill type munro`() {
-        assertThat(munroAnalyser.getMunrosByType(HillCategory.MUNRO).size).isEqualTo(1)
+        assertThat(
+            MunroAnalyser.Builder()
+                .byType(HillCategory.MUNRO)
+                .apply()
+                .size
+        ).isEqualTo(1)
     }
 
     @Test
     fun `search munros by hill type munro top`() {
-        assertThat(munroAnalyser.getMunrosByType(HillCategory.MUNRO_TOP).size).isEqualTo(2)
+        assertThat(
+            MunroAnalyser.Builder()
+                .byType(HillCategory.MUNRO_TOP)
+                .apply()
+                .size
+        ).isEqualTo(2)
     }
 
     @Test
     fun `search munros by hill type either returns all`() {
-        assertThat(munroAnalyser.getMunrosByType(HillCategory.EITHER).size).isEqualTo(3)
+        assertThat(
+            MunroAnalyser.Builder()
+                .byType(HillCategory.EITHER)
+                .apply()
+                .size
+        ).isEqualTo(3)
     }
 
     @Test
     fun `sort munros by height ascending`() {
-        assertThat(munroAnalyser.getMunrosByHeight(SortDirection.ASC))
-            .isInOrder(compareBy<Munro> { it.heightMetric })
+        assertThat(
+            MunroAnalyser.Builder()
+                .byHeight(SortDirection.ASC)
+                .apply()
+        ).isInOrder(compareBy<Munro> { it.heightMetric })
     }
 
     @Test
     fun `sort munros by height descending`() {
-        assertThat(munroAnalyser.getMunrosByHeight(SortDirection.DESC))
-            .isInOrder(compareByDescending<Munro> { it.heightMetric })
+        assertThat(
+            MunroAnalyser.Builder()
+                .byHeight(SortDirection.DESC)
+                .apply()
+        ).isInOrder(compareByDescending<Munro> { it.heightMetric })
     }
 
     @Test
     fun `sort munros by name ascending`() {
-        assertThat(munroAnalyser.getMunrosByName(SortDirection.ASC))
-            .isInOrder(compareBy<Munro> { it.name })
+        assertThat(
+            MunroAnalyser.Builder()
+                .byName(SortDirection.ASC)
+                .apply()
+        ).isInOrder(compareBy<Munro> { it.name })
     }
 }
