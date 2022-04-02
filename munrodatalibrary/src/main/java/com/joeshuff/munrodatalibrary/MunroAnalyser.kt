@@ -12,9 +12,10 @@ class MunroAnalyser {
         loadedMunros.clear()
 
         loadedMunros.apply {
-            add(Munro("Test Munro", 3000f, HillCategory.MUNRO_TOP, "123456"))
-            add(Munro("Test Munro 2", 1000f, HillCategory.MUNRO, "wertyui"))
-            add(Munro("Test Munro 3", 2000f, HillCategory.MUNRO_TOP, "9876t5"))
+            repeat(40) {
+                add(Munro("Test MunroTop $it", it * 100f, HillCategory.MUNRO_TOP, "${it}topde"))
+                add(Munro("Test Munro $it", it * 100f, HillCategory.MUNRO, "${it}abcde"))
+            }
         }
     }
 
@@ -37,6 +38,8 @@ class MunroAnalyser {
 
     class Builder {
         private val filterInstructions = arrayListOf<(List<Munro>) -> List<Munro>>()
+
+        private var sizeLimit: Int? = null
 
         fun byType(category: HillCategory) = apply {
             filterInstructions.add { it.filter {
@@ -63,6 +66,8 @@ class MunroAnalyser {
             }
         }
 
+        fun limit(maxSize: Int) = apply { sizeLimit = maxSize }
+
         fun apply(): List<Munro> {
             var munros = MunroAnalyser().getMunros()
 
@@ -70,7 +75,7 @@ class MunroAnalyser {
                 munros = it.invoke(munros)
             }
 
-            return munros
+            return munros.subList(0, sizeLimit?: munros.size)
         }
     }
 

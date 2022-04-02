@@ -20,7 +20,7 @@ class MunroDataUnitTesting {
 
     @Test
     fun `data loaded correctly from csv`() {
-        assertThat(munroAnalyser.getMunros().size).isEqualTo(3)
+        assertThat(munroAnalyser.getMunros().size).isEqualTo(80)
     }
 
     @Test
@@ -30,7 +30,7 @@ class MunroDataUnitTesting {
                 .byType(HillCategory.MUNRO)
                 .apply()
                 .size
-        ).isEqualTo(1)
+        ).isEqualTo(40)
     }
 
     @Test
@@ -40,7 +40,7 @@ class MunroDataUnitTesting {
                 .byType(HillCategory.MUNRO_TOP)
                 .apply()
                 .size
-        ).isEqualTo(2)
+        ).isEqualTo(40)
     }
 
     @Test
@@ -50,7 +50,7 @@ class MunroDataUnitTesting {
                 .byType(HillCategory.EITHER)
                 .apply()
                 .size
-        ).isEqualTo(3)
+        ).isEqualTo(80)
     }
 
     @Test
@@ -78,5 +78,24 @@ class MunroDataUnitTesting {
                 .byName(SortDirection.ASC)
                 .apply()
         ).isInOrder(compareBy<Munro> { it.name })
+    }
+
+    @Test
+    fun `sort munros by name descending`() {
+        assertThat(
+            MunroAnalyser.Builder()
+                .byName(SortDirection.DESC)
+                .apply()
+        ).isInOrder(compareByDescending<Munro> { it.name })
+    }
+
+    @Test
+    fun `limit size of output list`() {
+        assertThat(
+            MunroAnalyser.Builder()
+                .limit(10)
+                .apply()
+                .size
+        ).isEqualTo(10)
     }
 }
