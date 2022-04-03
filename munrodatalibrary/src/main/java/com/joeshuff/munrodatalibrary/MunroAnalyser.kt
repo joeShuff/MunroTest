@@ -1,22 +1,27 @@
 package com.joeshuff.munrodatalibrary
 
-import kotlin.math.max
+import java.io.File
+import kotlin.math.min
+
 
 class MunroAnalyser {
 
     private var loadedMunros = arrayListOf<Munro>()
 
     init {
-        loadData()
+        loadData("munrotab_v6.2.csv")
     }
 
     private fun loadData(filename: String = "") {
         loadedMunros.clear()
 
-        loadedMunros.apply {
-            repeat(40) {
-                add(Munro("Test MunroTop $it", it * 100f, HillCategory.MUNRO_TOP, "${it}topde"))
-                add(Munro("Test Munro $it", it * 100f, HillCategory.MUNRO, "${it}abcde"))
+        val lines = File(filename).readLines()
+
+        lines.subList(1, lines.size).forEach {
+            val asList = it.split(",")
+
+            Munro.loadFromCsvEntryOrNull(asList)?.let {
+                loadedMunros.add(it)
             }
         }
     }
@@ -65,8 +70,10 @@ class MunroAnalyser {
             }
         }
 
-        fun orderBy() {
-
+        fun orderBy(munroComparator: Comparator<Munro>) = apply {
+            filterInstructions.add {
+                it.sortedWith(munroComparator)
+            }
         }
 
         fun limit(maxSize: Int) = apply { sizeLimit = maxSize }
@@ -78,7 +85,7 @@ class MunroAnalyser {
                 munros = it.invoke(munros)
             }
 
-            return munros.subList(0, sizeLimit?: munros.size)
+            return munros.subList(0, min(munros.size, sizeLimit?: munros.size))
         }
     }
 

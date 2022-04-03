@@ -8,6 +8,7 @@ import com.joeshuff.munrodatalibrary.SortDirection
 import org.junit.Test
 
 import org.junit.Before
+import java.io.File
 
 class MunroDataUnitTesting {
 
@@ -15,12 +16,13 @@ class MunroDataUnitTesting {
 
     @Before
     fun setup() {
+        val file = File("test.csv")
         munroAnalyser = MunroAnalyser()
     }
 
     @Test
     fun `data loaded correctly from csv`() {
-        assertThat(munroAnalyser.getMunros().size).isEqualTo(80)
+        assertThat(munroAnalyser.getMunros().size).isEqualTo(602)
     }
 
     @Test
@@ -30,7 +32,7 @@ class MunroDataUnitTesting {
                 .filterByType(HillCategory.MUNRO)
                 .apply()
                 .size
-        ).isEqualTo(40)
+        ).isEqualTo(284)
     }
 
     @Test
@@ -40,7 +42,7 @@ class MunroDataUnitTesting {
                 .filterByType(HillCategory.MUNRO_TOP)
                 .apply()
                 .size
-        ).isEqualTo(40)
+        ).isEqualTo(227)
     }
 
     @Test
@@ -50,7 +52,7 @@ class MunroDataUnitTesting {
                 .filterByType(HillCategory.EITHER)
                 .apply()
                 .size
-        ).isEqualTo(80)
+        ).isEqualTo(602)
     }
 
     @Test
@@ -106,40 +108,43 @@ class MunroDataUnitTesting {
                 .filterByMinHeight(1000f)
                 .apply()
                 .size
-        ).isEqualTo(58)
+        ).isEqualTo(259)
     }
 
     @Test
     fun `max height set returns only lower munros`() {
-        assertThat(
-            MunroAnalyser.Builder()
-                .filterByMaxHeight(1000f)
-                .apply()
-                .size
-        ).isEqualTo(20)
+        val query = MunroAnalyser.Builder()
+            .filterByMaxHeight(1000f)
+            .apply()
+
+        assertThat(query.size).isEqualTo(341)
     }
 
     @Test
-    fun `top 10 munro tops that are over twelve hundred meters ordered by name ascending`() {
+    fun `top 10 munro tops that are over one thousand meters ordered by name ascending`() {
         val searchQuery = MunroAnalyser.Builder()
             .filterByType(HillCategory.MUNRO_TOP)
-            .filterByMinHeight(1200f)
+            .filterByMinHeight(1000f)
             .orderByName(SortDirection.ASC)
             .limit(10)
             .apply()
 
         assertThat(searchQuery.size).isEqualTo(10)
-        assertThat(searchQuery.filter { it.hillCategory != HillCategory.MUNRO_TOP }).isEmpty()
-        assertThat(searchQuery.filter { it.heightMetric < 1200f }).isEmpty()
+        assertThat(searchQuery.all { it.hillCategory == HillCategory.MUNRO_TOP }).isTrue()
+        assertThat(searchQuery.all { it.heightMetric > 1000f }).isTrue()
     }
 
     @Test
     fun `empty query returns whole list`() {
-        assertThat(MunroAnalyser.Builder().apply().size).isEqualTo(80)
+        assertThat(MunroAnalyser.Builder().apply().size).isEqualTo(602)
     }
 
     @Test
     fun `order by name then height`() {
+        val searchQuery = MunroAnalyser.Builder()
+            .orderBy(compareBy({ it.name }, {it.heightMetric}))
+            .apply()
 
+        assertThat(searchQuery).isInOrder(compareBy<Munro>({ it.name }, {it.heightMetric}))
     }
 }
